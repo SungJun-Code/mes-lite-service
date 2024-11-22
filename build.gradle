@@ -1,0 +1,81 @@
+plugins {
+	java
+	id("org.springframework.boot") version "3.3.5"
+	id("io.spring.dependency-management") version "1.1.6"
+}
+
+//apply plugin: 'java'
+//apply plugin: 'war'
+
+//JDK 버전 설정
+//sourceCompatibility = 1.8
+//targetCompatibility = 1.8
+
+group = "com.custom"
+version = "0.0.1-SNAPSHOT"
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom(configurations.annotationProcessor.get())
+	}
+}
+
+//라이브러리 저장소
+repositories {
+	//mavenCentral()
+	jcenter()
+}
+
+//인코딩
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+dependencies {
+	testCompile fileTree(dir: 'WebContent/WEB-INF/lib', include: ['*.jar'])
+	compile fileTree(dir: 'lib', include: ['*.jar'])
+	compile 'ch.qos.logback:logback-classic:1.2.2'
+	
+	//Spring
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	implementation 'io.swagger:swagger-annotations:1.5.22'
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	
+	//MS-SQL
+	runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
+	
+	compileOnly("org.projectlombok:lombok")
+	annotationProcessor("org.projectlombok:lombok")
+	
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper' 
+	
+	
+	//lombok 의존성
+	compileOnly 'org.projectlombok:lombok:1.18.24' 
+	annotationProcessor 'org.projectlombok:lombok:1.18.24'
+	
+	// JPA 의존성
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa' 
+	runtimeOnly 'com.h2database:h2'
+	
+	implementation 'javax.servlet:jstl:1.2'
+}
+
+tasks.withType<Test> {
+	useJUnitPlatform()
+}
+
+//프로젝트 폴더 이름
+//war 설정
+project.webAppDirName = 'WebContent'
+war {
+	archiveName = "${baseName}.${extension}"
+}
